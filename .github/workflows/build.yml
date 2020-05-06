@@ -1,0 +1,42 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+jobs:  
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps: 
+    - uses: actions/checkout@v2
+    - name: Setup node 12
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Cache node modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          
+    - name: Install dependencies and build
+      run: |
+        npm install --silent
+        npm run build
+
+#    - name: Build popular-repos image
+#      uses: docker/build-push-action@v1
+#      with:
+#        username: ${{secrets.AZURE_REGISTRY_USER}}
+#        password: ${{secrets.AZURE_REGISTRY_PASS}}
+#        registry: ${{ secrets.AZURE_REGISTRY_NAME }}
+#        repository: popular-repos
+#        tag_with_sha: true
+#        tag_with_ref: true
+#        add_git_labels: true
+#        cache_froms: popular-repos:latest
+          
+
